@@ -314,48 +314,53 @@
             // Handle form submission
             laptopForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                // Get form values
+
                 const name = document.getElementById('laptopName').value;
                 const brand = document.getElementById('laptopBrand').value;
                 const price = parseFloat(document.getElementById('laptopPrice').value).toFixed(2);
                 const description = document.getElementById('laptopDescription').value;
                 const specs = document.getElementById('laptopSpecs').value;
                 const images = document.getElementById('laptopImages').files;
-                
-                // Create a new laptop object
-                const newLaptop = {
-                    id: Date.now(), // Simple unique ID
-                    name,
-                    brand,
-                    price,
-                    description,
-                    specs,
-                    // In a real app, you would upload the image to a server and get the URL
-                    // For this demo, we'll use a placeholder
-                    imageUrl: images.length > 0 ? URL.createObjectURL(images[0]) : 'https://via.placeholder.com/300x180?text=No+Image',
-                    addedBy: localStorage.getItem('userEmail') || 'Anonymous',
-                    dateAdded: new Date().toISOString()
-                };
-                
-                // Save the new laptop
-                const laptops = loadLaptops();
-                laptops.unshift(newLaptop); // Add to beginning
-                saveLaptops(laptops);
-                
-                // Add the new laptop to the page
-                displayLaptops();
-                
-                // Reset form and hide it
-                laptopForm.reset();
-                formOverlay.style.display = 'none';
-                addItemForm.style.display = 'none';
-                
-                // Show success message
-                alert('Laptop added successfully! It will be visible to all users.');
+
+                // If an image is uploaded, convert it to Base64
+                if (images.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        saveLaptopWithImage(event.target.result);
+                    };
+                    reader.readAsDataURL(images[0]);
+                } else {
+                    saveLaptopWithImage('https://via.placeholder.com/300x180?text=No+Image');
+                }
+
+                function saveLaptopWithImage(imageUrl) {
+                    const newLaptop = {
+                        id: Date.now(),
+                        name,
+                        brand,
+                        price,
+                        description,
+                        specs,
+                        imageUrl, // This will be a Base64 string or placeholder URL
+                        addedBy: localStorage.getItem('userEmail') || 'Anonymous',
+                        dateAdded: new Date().toISOString()
+                    };
+
+                    const laptops = loadLaptops();
+                    laptops.unshift(newLaptop);
+                    saveLaptops(laptops);
+
+                    displayLaptops();
+
+                    laptopForm.reset();
+                    formOverlay.style.display = 'none';
+                    addItemForm.style.display = 'none';
+
+                    alert('Laptop added successfully! It will be visible to all users.');
+                }
             });
             
-            // Function to add a laptop to the page
+            
             function addLaptopToPage(laptop) {
                 const laptopItem = document.createElement('div');
                 laptopItem.className = 'laptop-item';
