@@ -255,38 +255,6 @@
             const laptopForm = document.getElementById('laptopForm');
             const laptopsContainer = document.getElementById('laptopsContainer');
             
-            // Key for storing laptops in localStorage (in a real app, use a database)
-            const STORAGE_KEY = 'kurdShopping_laptops';
-            
-            // Load laptops from storage
-            function loadLaptops() {
-                const laptopsJSON = localStorage.getItem(STORAGE_KEY);
-                return laptopsJSON ? JSON.parse(laptopsJSON) : [];
-            }
-            
-            // Save laptops to storage
-            function saveLaptops(laptops) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(laptops));
-            }
-            
-            // Display all laptops
-            function displayLaptops() {
-                const laptops = loadLaptops();
-                laptopsContainer.innerHTML = '';
-                
-                if (laptops.length === 0) {
-                    laptopsContainer.innerHTML = '<p>No laptops available. Add one to get started!</p>';
-                    return;
-                }
-                
-                laptops.forEach(laptop => {
-                    addLaptopToPage(laptop);
-                });
-            }
-            
-            // Initial display
-            displayLaptops();
-            
             // Show form when add button is clicked
             addButton.addEventListener('click', function() {
                 formOverlay.style.display = 'block';
@@ -311,8 +279,62 @@
                 addItemForm.style.display = 'none';
             });
             
+            // Function to fetch laptops from the server
+            async function fetchLaptops() {
+                try {
+                    const response = await fetch('../api/getLaptops.php');
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error fetching laptops:', error);
+                    return [];
+                }
+            }
+            
+            // Function to add a new laptop to the database
+            async function addLaptop(laptopData) {
+                try {
+                    const response = await fetch('../api/addLaptop.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(laptopData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error adding laptop:', error);
+                    return { success: false, message: error.message };
+                }
+            }
+            
+            // Display all laptops
+            async function displayLaptops() {
+                const laptops = await fetchLaptops();
+                laptopsContainer.innerHTML = '';
+                
+                if (laptops.length === 0) {
+                    laptopsContainer.innerHTML = '<p>No laptops available. Add one to get started!</p>';
+                    return;
+                }
+                
+                laptops.forEach(laptop => {
+                    addLaptopToPage(laptop);
+                });
+            }
+            
+            // Initial display
+            displayLaptops();
+            
             // Handle form submission
-            laptopForm.addEventListener('submit', function(e) {
+            laptopForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 const name = document.getElementById('laptopName').value;
@@ -323,56 +345,56 @@
                 const images = document.getElementById('laptopImages').files;
 
                 // If an image is uploaded, convert it to Base64
+                let imageUrl = 'https://via.placeholder.com/300x180?text=No+Image';
+                
                 if (images.length > 0) {
                     const reader = new FileReader();
-                    reader.onload = function(event) {
-                        saveLaptopWithImage(event.target.result);
+                    reader.onload = async function(event) {
+                        imageUrl = event.target.result;
+                        await saveLaptop(imageUrl);
                     };
                     reader.readAsDataURL(images[0]);
                 } else {
-                    saveLaptopWithImage('https://via.placeholder.com/300x180?text=No+Image');
+                    await saveLaptop(imageUrl);
                 }
 
-                function saveLaptopWithImage(imageUrl) {
+                async function saveLaptop(imageUrl) {
                     const newLaptop = {
-                        id: Date.now(),
                         name,
                         brand,
                         price,
                         description,
                         specs,
-                        imageUrl, // This will be a Base64 string or placeholder URL
-                        addedBy: localStorage.getItem('userEmail') || 'Anonymous',
-                        dateAdded: new Date().toISOString()
+                        imageUrl,
+                        addedBy: localStorage.getItem('userEmail') || 'Anonymous'
                     };
 
-                    const laptops = loadLaptops();
-                    laptops.unshift(newLaptop);
-                    saveLaptops(laptops);
-
-                    displayLaptops();
-
-                    laptopForm.reset();
-                    formOverlay.style.display = 'none';
-                    addItemForm.style.display = 'none';
-
-                    alert('Laptop added successfully! It will be visible to all users.');
+                    const result = await addLaptop(newLaptop);
+                    
+                    if (result.success) {
+                        displayLaptops();
+                        laptopForm.reset();
+                        formOverlay.style.display = 'none';
+                        addItemForm.style.display = 'none';
+                        alert('Laptop added successfully! It will be visible to all users.');
+                    } else {
+                        alert('Error adding laptop: ' + result.message);
+                    }
                 }
             });
-            
             
             function addLaptopToPage(laptop) {
                 const laptopItem = document.createElement('div');
                 laptopItem.className = 'laptop-item';
                 
                 laptopItem.innerHTML = `
-                    <img src="${laptop.imageUrl}" alt="${laptop.name}" class="laptop-image">
+                    <img src="${laptop.image_url}" alt="${laptop.name}" class="laptop-image">
                     <div class="laptop-details">
                         <div class="laptop-name">${laptop.name}</div>
                         <div class="laptop-brand">${laptop.brand}</div>
                         <div class="laptop-price">$${laptop.price}</div>
                         <div class="laptop-specs" title="${laptop.specs}">${laptop.specs}</div>
-                        <div style="font-size: 0.7rem; color: #888;">Added by: ${laptop.addedBy}</div>
+                        <div style="font-size: 0.7rem; color: #888;">Added by: ${laptop.added_by}</div>
                     </div>
                 `;
                 
@@ -380,6 +402,5 @@
             }
         });
     </script>
-    <script src="../scripts/laptopsystam.js"></script>
 </body>
 </html>
