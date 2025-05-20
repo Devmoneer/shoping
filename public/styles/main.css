@@ -81,6 +81,24 @@ body {
 }
 
 
+.user-name {
+    font-size: 20px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+
+.add-button {
+    border: none;
+    background: none;
+    margin-top: 10px;
+    width: 100%;  
+    margin-top: 20px;  
+}
+
+
+
 
 
 
