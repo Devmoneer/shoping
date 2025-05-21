@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting - App</title>
+    <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <p class="logo">Accounting App</p>
+        <input type="checkbox" id="checkbox" style="display:none;">
+        <label for="checkbox" class="toggle">
+            <div class="bars" id="bar1"></div>
+            <div class="bars" id="bar2"></div>
+            <div class="bars" id="bar3"></div>
+        </label>
+    </header>
+
+    <div class="main-content">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search transactions...">
+            <button class="search-btn" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <div class="list-container">
+            <a href="home-expenses.html" style="text-decoration:none;color:inherit;">
+                <div class="list-item">
+                    <div class="item-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="item-content">
+                        <h3>Home Expenses</h3>
+                        <p>Monthly rent and utilities</p>
+                    </div>
+                    <div class="item-amount"><img src="./images/arrow-right-336-svgrepo-com.svg" alt="arrow" width="20"></div>
+                </div>
+            </a>
+            <a href="food-dining.html" style="text-decoration:none;color:inherit;">
+                <div class="list-item">
+                    <div class="item-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="item-content">
+                        <h3>Food & Dining</h3>
+                        <p>Groceries and restaurants</p>
+                    </div>
+                    <div class="item-amount"><img src="./images/arrow-right-336-svgrepo-com.svg" alt="arrow" width="20"></div>
+                </div>
+            </a>
+            
+            <div class="list-item">
+                <div class="item-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="item-content">
+                    <h3>Transportation</h3>
+                    <p>Fuel and maintenance</p>
+                </div>
+                <div class="item-amount"><img src="./images/arrow-right-336-svgrepo-com.svg" alt="arrow" width="20"></div>
+            </div>
+            
+            <div class="list-item">
+                <div class="item-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="item-content">
+                    <h3>Shopping</h3>
+                    <p>Clothing and accessories</p>
+                </div>
+                <div class="item-amount"><img src="./images/arrow-right-336-svgrepo-com.svg" alt="arrow" width="20"></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <img src="./images/setting-svgrepo-com.svg" alt="Settings" width="30">
+        </a>
+        <a href="#" class="nav-item">
+            <img src="./images/dollar-svgrepo-com.svg" alt="Accounts" width="30">
+        </a>
+        <a href="#" class="nav-item">
+            <img src="./images/personal-center-operation-record-svgrepo-com.svg" alt="Transactions" width="30">
+        </a>
+        <a href="#" class="nav-item active">
+            <img src="./images/home-smile-svgrepo-com.svg" alt="Home" width="30">
+        </a>
+    </nav>
+
+    <script src="../src/script/app.js"></script>
+</body>
+</html>
